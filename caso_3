@@ -1,0 +1,64 @@
+CREATE SCHEMA Caso_3;
+
+-- Terroristas
+CREATE TABLE Terroristas (
+    TerroristaID INT PRIMARY KEY,
+    NombreReal VARCHAR(150),
+    NivelPeligrosidad INT
+);
+
+-- Alias_Terroristas
+CREATE TABLE AliasTerroristas (
+    AliasID INT PRIMARY KEY,
+    TerroristaID INT,
+    Alias VARCHAR(150),
+    FOREIGN KEY (TerroristaID) REFERENCES Terroristas(TerroristaID)
+);
+
+-- Credenciales_Terroristas
+CREATE TABLE CredencialesTerroristas (
+    CredencialID INT PRIMARY KEY,
+    TerroristaID INT,
+    NombreCredencial VARCHAR(150),
+    CodigoNumerico INT,
+    FOREIGN KEY (TerroristaID) REFERENCES Terroristas(TerroristaID)
+);
+
+-- Agentes_Especiales
+CREATE TABLE AgentesEspeciales (
+    AgenteID INT PRIMARY KEY,
+    NombreAgente VARCHAR(150),
+    Rango INT
+);
+
+-- Credenciales_Agentes
+CREATE TABLE CredencialesAgentes (
+    CredencialID INT PRIMARY KEY,
+    AgenteID INT,
+    NombreCredencial VARCHAR(150),
+    CodigoNumerico INT,
+    FOREIGN KEY (AgenteID) REFERENCES AgentesEspeciales(AgenteID)
+);
+
+-- Ciudades
+CREATE TABLE Ciudades (
+    CiudadID INT PRIMARY KEY,
+    NombreCiudad VARCHAR(150),
+    Habitantes INT
+);
+
+-- Terroristas_Ciudades
+CREATE TABLE TerroristasCiudades (
+    CiudadID INT,
+    TerroristaID INT,
+    FOREIGN KEY (CiudadID) REFERENCES Ciudades(CiudadID),
+    FOREIGN KEY (TerroristaID) REFERENCES Terroristas(TerroristaID)
+);
+
+-- Ciudades_Vecinas
+CREATE TABLE CiudadesVecinas (
+    CiudadID INT,
+    CiudadVecinaID INT,
+    FOREIGN KEY (CiudadID) REFERENCES Ciudades(CiudadID),
+    FOREIGN KEY (CiudadVecinaID) REFERENCES Ciudades(CiudadID)
+);
