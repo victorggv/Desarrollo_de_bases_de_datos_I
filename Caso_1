@@ -1,0 +1,79 @@
+CREATE SCHEMA caso_1;
+
+-- Proyectos
+CREATE TABLE Proyectos (
+    ProyectoID INT PRIMARY KEY,
+    NombreProyecto VARCHAR(150),
+    Descripcion TEXT,
+    FechaInicio DATE,
+    FechaFin DATE,
+    PresupuestoInicial DECIMAL(10, 2),
+    IngresosObtenidos DECIMAL(10, 2),
+    FuentesFinanciamiento TEXT
+);
+
+-- Comunidades_Beneficiarias
+CREATE TABLE ComunidadesBeneficiarias (
+    ComunidadID INT PRIMARY KEY,
+    NombreComunidad VARCHAR(150),
+    Localizacion VARCHAR(150),
+    NumeroHogaresBeneficiados INT,
+    ImpactoEducacion BOOLEAN,
+    ImpactoSalud BOOLEAN,
+    EmpleoGenerado INT
+);
+
+-- Indicadores
+CREATE TABLE Indicadores (
+    IndicadorID INT PRIMARY KEY,
+    NombreIndicador VARCHAR(150),
+    Descripcion TEXT
+);
+
+-- Registro_Indicadores
+CREATE TABLE RegistroIndicadores (
+    RegistroID INT PRIMARY KEY,
+    ProyectoID INT,
+    IndicadorID INT,
+    ValorIndicador DECIMAL(10, 2),
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID),
+    FOREIGN KEY (IndicadorID) REFERENCES Indicadores(IndicadorID)
+);
+
+-- Capacitaciones
+CREATE TABLE Capacitaciones (
+    CapacitacionID INT PRIMARY KEY,
+    ProyectoID INT,
+    Tema VARCHAR(150),
+    NumeroParticipantes INT,
+    ImpactoPercebido TEXT,
+    Retroalimentacion TEXT,
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID)
+);
+
+-- Recursos_Financieros
+CREATE TABLE RecursosFinancieros (
+    RecursoID INT PRIMARY KEY,
+    ProyectoID INT,
+    Concepto VARCHAR(150),
+    Monto DECIMAL(10, 2),
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID)
+);
+
+-- Monitoreo_Ambiental
+CREATE TABLE MonitoreoAmbiental (
+    MonitoreoID INT PRIMARY KEY,
+    ProyectoID INT,
+    EmisionesCarbonoAntes DECIMAL(10, 2),
+    EmisionesCarbonoDespues DECIMAL(10, 2),
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID)
+);
+
+-- Participacion_Comunidad
+CREATE TABLE ParticipacionComunidad (
+    ParticipacionID INT PRIMARY KEY,
+    ProyectoID INT,
+    TipoParticipacion VARCHAR(150),
+    Detalles TEXT,
+    FOREIGN KEY (ProyectoID) REFERENCES Proyectos(ProyectoID)
+);
