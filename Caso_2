@@ -1,0 +1,41 @@
+CREATE SCHEMA Caso_2;
+
+-- Delincuentes
+CREATE TABLE Delincuentes (
+    DelincuenteID INT PRIMARY KEY,
+    Nombres VARCHAR(150),
+    Apellidos VARCHAR(150),
+    Alias VARCHAR(50),
+    FechaNacimiento DATE,
+    Fotografia BLOB,
+    AntecedentesPenales TEXT
+);
+
+-- Tipos_Delitos
+CREATE TABLE TiposDelitos (
+    TipoDelitoID INT PRIMARY KEY,
+    NombreTipo VARCHAR(150),
+    Descripcion TEXT
+);
+
+-- Delitos
+CREATE TABLE Delitos (
+    DelitoID INT PRIMARY KEY,
+    TipoDelitoID INT,
+    FechaDelito DATE,
+    Lugar VARCHAR(150),
+    Descripcion TEXT,
+    DelincuenteID INT,
+    FOREIGN KEY (TipoDelitoID) REFERENCES TiposDelitos(TipoDelitoID),
+    FOREIGN KEY (DelincuenteID) REFERENCES Delincuentes(DelincuenteID)
+);
+
+-- Avistamientos
+CREATE TABLE Avistamientos (
+    AvistamientoID INT PRIMARY KEY,
+    DelincuenteID INT,
+    LugarAvistamiento VARCHAR(150),
+    FechaAvistamiento DATE,
+    InstitucionReportante VARCHAR(255),
+    FOREIGN KEY (DelincuenteID) REFERENCES Delincuentes(DelincuenteID)
+);
