@@ -1,0 +1,87 @@
+CREATE DATABASE IF NOT EXISTS BD_Tienda_retail;
+USE BD_Tienda_retail;
+
+-- 1. Creación de Entidades Cliente y Boleta con datos iniciales:
+
+-- Cliente
+create table if not exists Cliente (
+    Rut_cli VARCHAR(12) PRIMARY KEY,
+    Nombre_cliente VARCHAR(100),
+    Direccion_cliente VARCHAR(200)
+);
+
+-- Boleta
+create table if not exists Boleta (
+    Folio INT PRIMARY KEY,
+    Fecha DATE,
+    Total INT,
+    Forma_pago VARCHAR(50),
+    Rut_cli VARCHAR(12),
+    FOREIGN KEY (Rut_cli) REFERENCES Cliente(Rut_cli)
+);
+
+-- Inserción de datos en la tabla Cliente
+INSERT INTO Cliente (Rut_cli, Nombre_cliente, Direccion_cliente)
+VALUES
+    ('13457305-9', 'Ana Castro', 'Av. Carmen 1680 Recoleta'),
+    ('20242591-k', 'Jose Mora', 'Alonso Ovalle 240 La Reina'),
+    ('18357596-6', 'Luis Parodi', 'Arturo Prat 4410 Santiago Centro');
+
+-- Inserción de datos en la tabla Boleta
+INSERT INTO Boleta (Folio, Fecha, Total, Forma_pago, Rut_cli)
+VALUES
+    (3456, '2011-09-08', 70000, 'Debito', '20242591-k'),
+    (3457, '2021-07-08', 60000, 'Efectivo', '13457305-9'),
+    (3458, '2022-07-18', 25000, 'Efectivo', '13457305-9'),
+    (3459, '2005-05-04', 80000, 'Debito', '20242591-k'),
+    (3460, '2021-07-08', 70000, 'Efectivo', '20242591-k');
+
+
+-- 2. Desarrollo de Consultas:
+-- a. Consulta para obtener el nombre del cliente, dirección, 
+-- fecha de las boletas y forma de pago de aquellas transacciones 
+-- realizadas con la forma de pago DEBITO.
+
+SELECT
+    C.Nombre_cliente,
+    C.Direccion_cliente,
+    B.Fecha,
+    B.Forma_pago
+FROM
+    Cliente C
+INNER JOIN
+    Boleta B ON C.Rut_cli = B.Rut_cli
+WHERE
+    B.Forma_pago = 'Debito';
+
+
+-- b. Consulta para obtener el promedio de todas las boletas
+-- realizadas por el cliente José Mora
+
+SELECT
+    ROUND(AVG(B.Total), 2) AS Promedio_boletas
+FROM
+    Boleta B
+INNER JOIN
+    Cliente C ON B.Rut_cli = C.Rut_cli
+WHERE
+    C.Nombre_cliente = 'Jose Mora';
+
+-- 3. Creación de la Vista Vista_reporte:
+
+CREATE VIEW Vista_reporte AS
+SELECT
+    C.Rut_cli,
+    C.Nombre_cliente,
+    B.Folio,
+    B.Fecha,
+    B.Total,
+    B.Forma_pago
+FROM
+    Cliente C
+INNER JOIN
+    Boleta B ON C.Rut_cli = B.Rut_cli
+WHERE
+    YEAR(B.Fecha) BETWEEN 2020 AND 2022
+ORDER BY
+    C.Rut_cli;
