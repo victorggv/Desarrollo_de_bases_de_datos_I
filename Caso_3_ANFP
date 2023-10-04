@@ -1,0 +1,87 @@
+-- Creación de la base de datos ANFP
+CREATE DATABASE IF NOT EXISTS ANFP;
+USE ANFP;
+
+-- Equipo
+CREATE TABLE Equipo (
+    Cod_equipo VARCHAR(20) PRIMARY KEY,
+    Nom_equipo VARCHAR(60),
+    Fecha_fund DATE
+);
+
+-- Jugador
+CREATE TABLE Jugador (
+    Cod_jugador VARCHAR(50) PRIMARY KEY,
+    Nom_jugador VARCHAR(100),
+    Genero BOOLEAN,
+    Fecha_nacimiento DATE
+);
+
+-- Contrato
+CREATE TABLE Contrato (
+    Folio INT PRIMARY KEY,
+    Fecha_inicio DATE,
+    Fecha_term DATE,
+    Sueldo_base REAL,
+    Cod_equipo VARCHAR(20),
+    Cod_jugador VARCHAR(50),
+    FOREIGN KEY (Cod_equipo) REFERENCES Equipo(Cod_equipo),
+    FOREIGN KEY (Cod_jugador) REFERENCES Jugador(Cod_jugador)
+);
+
+-- Inserción de datos en la tabla Equipo
+INSERT INTO Equipo (Cod_equipo, Nom_equipo, Fecha_fund)
+VALUES
+    ('E1', 'Equipo A', '2000-01-15'),
+    ('E2', 'Equipo B', '1995-05-20'),
+    ('E3', 'Equipo C', '2003-12-10'),
+    ('E4', 'Equipo D', '1998-08-05'),
+    ('E5', 'Equipo E', '2005-03-25');
+
+-- Inserción de datos en la tabla Jugador
+INSERT INTO Jugador (Cod_jugador, Nom_jugador, Genero, Fecha_nacimiento)
+VALUES
+    ('J1', 'Juan Pérez', TRUE, '1997-02-14'),
+    ('J2', 'Maria López', FALSE, '1998-08-03'),
+    ('J3', 'Carlos González', TRUE, '1996-06-20'),
+    ('J4', 'Ana Rodríguez', FALSE, '1999-04-10'),
+    ('J5', 'Pedro Soto', TRUE, '2000-01-05');
+
+-- Inserción de datos en la tabla Contrato
+INSERT INTO Contrato (Folio, Fecha_inicio, Fecha_term, Sueldo_base, Cod_equipo, Cod_jugador)
+VALUES
+    (1001, '2023-01-10', '2023-12-31', 500000, 'E1', 'J1'),
+    (1002, '2023-02-15', '2023-12-31', 450000, 'E2', 'J2'),
+    (1003, '2023-03-20', '2023-12-31', 520000, 'E1', 'J3'),
+    (1004, '2023-04-25', '2023-12-31', 480000, 'E3', 'J4'),
+    (1005, '2023-05-30', '2023-12-31', 510000, 'E2', 'J5');
+
+
+--2. Consulta para Listar Equipos y Jugadores Femeninos Contratados en 2023:
+
+SELECT
+    E.Nom_equipo AS Equipo,
+    J.Nom_jugador AS Jugador
+FROM
+    Equipo E
+JOIN
+    Contrato C ON E.Cod_equipo = C.Cod_equipo
+JOIN
+    Jugador J ON C.Cod_jugador = J.Cod_jugador
+WHERE
+    J.Genero = FALSE  -- Femenino
+    AND YEAR(C.Fecha_inicio) = 2023;
+
+--3. Creación de una Vista para el Total de Jugadores por Club:
+
+-- Creación de la vista
+CREATE VIEW Vista_JugadoresPorClub AS
+SELECT
+    E.Nom_equipo AS Club,
+    COUNT(*) AS Total_Jugadores
+FROM
+    Equipo E
+LEFT JOIN
+    Contrato C ON E.Cod_equipo = C.Cod_equipo
+GROUP BY
+    E.Nom_equipo;
