@@ -1,0 +1,96 @@
+CREATE DATABASE IF NOT EXISTS BD_Caso_anco;
+USE BD_Caso_Banco;
+
+-- 1. Creación de las Entidades Banco, Sucursal y 
+-- Empleado con datos iniciales:
+
+-- Banco
+CREATE TABLE Banco (
+    Cod_b INT PRIMARY KEY,
+    Nom_b VARCHAR(100)
+);
+
+-- Sucursal
+CREATE TABLE Sucursal (
+    Cod_s INT PRIMARY KEY,
+    Nom_s VARCHAR(100),
+    Cod_b INT,
+    FOREIGN KEY (Cod_b) REFERENCES Banco(Cod_b)
+);
+
+-- Empleado
+CREATE TABLE Empleado (
+    Id_e VARCHAR(2) PRIMARY KEY,
+    Nom_e VARCHAR(100),
+    S_base INT,
+    Cod_s INT,
+    FOREIGN KEY (Cod_s) REFERENCES Sucursal(Cod_s)
+);
+
+-- Inserción de datos en la tabla Banco
+INSERT INTO Banco (Cod_b, Nom_b)
+VALUES
+    (10001, 'Chase'),
+    (10002, 'Chile'),
+    (10003, 'Santander');
+
+-- Inserción de datos en la tabla Sucursal
+INSERT INTO Sucursal (Cod_s, Nom_s, Cod_b)
+VALUES
+    (11, 'Central', 10001),
+    (12, 'Sur', 10002),
+    (13, 'Florida', 10003);
+
+-- Inserción de datos en la tabla Empleado
+INSERT INTO Empleado (Id_e, Nom_e, S_base, Cod_s)
+VALUES
+    ('A1', 'Alfredo', 2500000, 11),
+    ('A2', 'Jose', 1500000, 12),
+    ('A3', 'Miguel', 3000000, 12),
+    ('A4', 'Luis', 2000000, 11),
+    ('A5', 'Alejandro', 1000000, 11);
+
+-- 2. Desarrollo de Consultas:
+-- a. Consulta para listar el nombre de todos 
+-- los bancos y los empleados respectivos ordenados
+-- por sueldo base.
+
+SELECT
+    B.Nom_b AS Banco,
+    E.Nom_e AS Empleado,
+    E.S_base AS Sueldo_Base
+FROM
+    Banco B
+INNER JOIN
+    Sucursal S ON B.Cod_b = S.Cod_b
+INNER JOIN
+    Empleado E ON S.Cod_s = E.Cod_s
+ORDER BY
+    E.S_base;
+
+-- b. Consulta para contabilizar el total de empleados por banco.
+
+SELECT
+    B.Nom_b AS Banco,
+    COUNT(E.Id_e) AS Total_Empleados
+FROM
+    Banco B
+LEFT JOIN
+    Sucursal S ON B.Cod_b = S.Cod_b
+LEFT JOIN
+    Empleado E ON S.Cod_s = E.Cod_s
+GROUP BY
+    B.Nom_b;
+
+-- 3. Cálculo del promedio de sueldo de los empleados del banco CHASE:
+
+SELECT
+    AVG(E.S_base) AS Promedio_Sueldo
+FROM
+    Banco B
+INNER JOIN
+    Sucursal S ON B.Cod_b = S.Cod_b
+INNER JOIN
+    Empleado E ON S.Cod_s = E.Cod_s
+WHERE
+    B.Nom_b = 'Chase';
