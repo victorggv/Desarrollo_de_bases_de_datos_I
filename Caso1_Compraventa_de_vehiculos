@@ -1,0 +1,61 @@
+CREATE DATABASE IF NOT EXISTS BD_Compraventa_de_vehiculos;
+USE DB_Compraventa_de_vehiculos;
+
+-- Propietario
+create table if not exists Propietario (
+rut_cli varchar(20) primary key,
+nombre_cliente varchar(100),
+direccion_cliente varchar(200)
+);
+
+-- Vehiculo
+create table if not exists Vehiculo (
+Patente varchar(20) primary key,
+Marca varchar(20),
+Modelo varchar(20),
+Color varchar(20),
+rut_cli varchar(20),
+foreign key (rut_cli) references Propietario(rut_cli)
+);
+
+-- Inserción de datos en la tabla Propietario
+INSERT INTO Propietario (rut_cli, nombre_cliente, direccion_cliente)
+VALUES
+('13457305-9', 'Ana Castro', 'Av. Carmen 1680 Recoleta'), 
+('20242591-k', 'Jose Mora', 'Alonso Ovalle 240 La Reina'), 
+('18357596-6', 'Luis Parodi', 'Arturo Prat 4410 Santiago Centro');
+
+-- Ver datos tabla Propietario
+select * from Propietario;
+
+-- Inserción de datos en la tabla Vehiculo
+INSERT INTO Vehiculo (Patente, Marca, Modelo, Color, rut_cli)
+VALUES
+('VGRT22', 'Suzuki', 'Alto', 'Negro', '20242591-k'), 
+('LCSH97', 'Subaru', 'Forester', 'Gris', '13457305-9'), 
+('ANTH21', 'Mahindra', 'Scorpio', 'Blanco', '13457305-9'),
+('LCER43', 'Suzuki', 'Alto', 'Negro', '20242591-k'),
+('AGDW32', 'Chevrolet', 'Spark ll', 'Rojo', '20242591-k');
+
+-- Ver datos tabla Propietario
+select * from Vehiculo;
+
+select marca, count(*) as total_vehiculos
+from Vehiculo
+group by marca;	
+
+select V.Patente, V.Marca, V.Modelo
+from Vehiculo V
+join Propietario P on V.rut_cli = P.rut_cli
+where P.nombre_cliente = 'Jose Mora';
+
+-- Crear Vista_Respaldo
+create view Vista_reporte as
+select V.Patente, V.Marca, P.nombre_cliente as Nombre_propietario
+from Vehiculo V
+join Propietario P on V.rut_cli = P.rut_cli
+where V.Marca in ('Mahindra', 'Suzuki')
+order by V.Patente asc;
+
+-- Realizar Consulta de Vista_Respaldo
+SELECT * FROM Vista_reporte;
