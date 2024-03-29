@@ -1,0 +1,92 @@
+CREATE DATABASE IF NOT EXISTS BD_Agencia_Turista;
+USE BD_Agencia_Turista;
+
+-- Crear tabla Region
+CREATE TABLE IF NOT EXISTS tb_Region (
+Id_Region INT AUTO_INCREMENT PRIMARY KEY,
+Cod_Region VARCHAR(10),
+Nombre_Region VARCHAR(50)
+);
+
+-- Crear tabla Ciudad
+CREATE TABLE IF NOT EXISTS tb_Ciudad (
+Id_Ciudad INT AUTO_INCREMENT PRIMARY KEY,
+Cod_Ciudad VARCHAR(10),
+Nombre_Ciudad VARCHAR(50)
+);
+
+-- Crear tabla Ciudad_Region
+CREATE TABLE IF NOT EXISTS tb_Ciudad_Region (
+Id_Ciudad_Region INT AUTO_INCREMENT PRIMARY KEY,
+Cod_Ciudad VARCHAR(10),
+Cod_Region VARCHAR(10),
+FOREIGN KEY (Id_Ciudad_region) REFERENCES tb_Ciudad (Id_Ciudad),
+FOREIGN KEY (Id_Ciudad_Region) REFERENCES tb_Region (Id_Region)
+);
+
+    -- Inserción de datos en la tabla Region
+INSERT INTO tb_Region (Cod_Region, Nombre_Region)
+VALUES
+('I', 'TARAPACA'),
+('II', 'ANTOFAGASTA'),
+('III', 'ATACAMA'),
+('IV', 'COQUIMBO'),
+('V', 'VALPARAISO'),
+('VI', 'LIBERTADOR BERNARDO O''HIGGINS');
+
+-- Ver datos tabla Region
+select * from tb_Region;
+
+-- Inserción de datos en la tabla Ciudad
+INSERT INTO tb_Ciudad (Cod_Ciudad, Nombre_Ciudad)
+VALUES
+(1, 'VIÑA DEL MAR'),
+(2, 'CONCON'),
+(3, 'RANCAGUA'),
+(4, 'CHUQUICAMATA'),
+(5, 'ELQUI'),
+(6, 'TALCAHUANO');
+
+-- Ver datos tabla Ciudad
+select * from tb_Ciudad;
+
+-- Insertar registros en la tabla Ciudad_Region
+INSERT INTO tb_Ciudad_Region (Cod_Ciudad, Cod_Region)
+VALUES
+(5, 'IV'),
+(2, 'V'),
+(1, 'V'),
+(3, 'VI'),
+(4, 'II'),
+(6, 'VIII');
+
+-- Ver datos tabla Ciudad_Region
+select * from tb_Ciudad_Region;
+
+INSERT INTO tb_Region (Cod_Region, Nombre_Region)
+VALUES
+('VIII', 'BIO BIO');
+
+-- Ver datos tabla Region
+select * from tb_Region;
+
+-- Listar nombre de ciudades de la región de VALPARAISO
+SELECT tb_Ciudad.Nombre_Ciudad
+FROM tb_Ciudad
+INNER JOIN tb_Ciudad_Region ON tb_Ciudad.Cod_Ciudad = tb_Ciudad_Region.Cod_Ciudad
+INNER JOIN tb_Region ON tb_Ciudad_Region.Cod_Region = tb_Region.Cod_Region
+WHERE tb_Region.Nombre_Region = 'VALPARAISO';
+
+-- Crear vista   
+CREATE VIEW VISTA_001 AS
+SELECT
+	r.Nombre_Region,
+    COUNT(cr.Cod_Ciudad) AS Total_Ciudades
+FROM
+	tb_Region r
+LEFT JOIN
+	tb_Ciudad_Region cr ON r.Cod_Region = cr.Cod_Region
+GROUP BY
+	r.Nombre_Region;
+    
+    SELECT * FROM VISTA_001;
