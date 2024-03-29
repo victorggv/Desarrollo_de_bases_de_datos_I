@@ -1,0 +1,58 @@
+CREATE DATABASE IF NOT EXISTS BD_Colegio;
+USE BD_Colegio;
+
+-- Crear tabla Persona
+CREATE TABLE IF NOT EXISTS tb_Persona (
+rut VARCHAR(20) PRIMARY KEY,
+nombre VARCHAR(100),
+domicilio VARCHAR(200),
+fec_nac date,
+edad int
+);
+
+-- Crear tabla Notas
+CREATE TABLE IF NOT EXISTS tb_Notas (
+Id_Notas INT AUTO_INCREMENT PRIMARY KEY,
+nom_asig VARCHAR(50),
+notas DECIMAL (3,1),
+fecha_nota DATE,
+profesor_asig VARCHAR(100),
+rut VARCHAR(20),
+FOREIGN KEY (rut) REFERENCES tb_Persona (rut)
+); 
+
+-- Insertar registros en la tabla Persona
+INSERT INTO tb_Persona (rut, nombre, domicilio, fec_nac, edad)
+VALUES
+('10357596-6', 'Aldo Catalán', 'Av.Holanda #455 Ñuñoa', '1969-11-03', 42),
+('14225233-K', 'Oscar Rivas', 'Av.Ossa #1250 La Reina', '1988-06-05', 24),
+('20212322-7', 'Ana Sánchez', 'Pasaje 34 La Cisterna', '1977-07-22', NULL);
+
+SELECT * FROM tb_Persona;
+
+-- Insertar registros en la tabla Notas
+INSERT INTO tb_Notas (nom_asig, notas, fecha_nota, profesor_asig, rut)
+VALUES
+('Ingles II', 6.4, '2011-08-06', 'Miss Olga R.', '20212322-7'),
+('Etica', 5.7, '2010-05-07', 'H.Moraga', '10357596-6'),
+('Ingles II', 7, '2011-09-06', 'Miss Olga R.', '20212322-7'),
+('Ingles II', 5, '2011-10-07', 'Miss Olga R.', '20212322-7'),
+('Etica', 6, '2010-06-07', 'P.Gómez', '14225233-K');
+
+SELECT * FROM tb_Notas;
+
+SELECT p.rut, p.nombre, n.nom_asig, n.notas, n.fecha_nota
+FROM tb_Persona p
+JOIN tb_Notas n ON p.rut = n.rut;
+
+SELECT ROUND(AVG(notas), 2) AS promedio
+FROM tb_Notas
+WHERE rut = '20212322-7' AND nom_asig = 'Ingles II';
+
+CREATE VIEW Vista_Promedio_Asignaturas AS
+SELECT p.nombre AS nombre, n.nom_asig, ROUND(AVG(n.notas), 2) AS promedio
+FROM tb_Persona p
+JOIN tb_Notas n ON p.rut = n.rut
+GROUP BY p.nombre, n.nom_asig;
+
+SELECT * FROM Vista_Promedio_Asignaturas;
